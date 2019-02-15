@@ -20,7 +20,6 @@
 #define WHITE 8
 #define OFF 9 
 
-
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_LEDS, PIN, NEO_GRB + NEO_KHZ800);
 
 const char* ssid     = "SSID";
@@ -31,6 +30,9 @@ const char* moonHost = "isitfullmoon.com";
 
 const int httpPort = 80;
 const int httpsPort = 443;
+
+const unsigned long SECOND = 1000;
+const unsigned long HOUR = 3600*SECOND;
 
 // specific to the mecuryretrogradeapi.com cert 
 const char fingerprint[] PROGMEM = "4a 36 25 b9 1f 4c 6d 61 c4 6f d3 8d 65 70 21 96 b0 05 13 0f";
@@ -72,7 +74,7 @@ void loop() {
     set_color_to(OFF);
   }
 
-  delay(1000000);  
+  delay(HOUR*12);  
 }
 
 bool isMoonFull() {
