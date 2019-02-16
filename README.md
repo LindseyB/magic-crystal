@@ -34,6 +34,6 @@ A simple magic crystal to alert the on-the-go witch to events to be mindful of. 
 8. (Optional) Place velcro on the base and the huzzah to keep both in place
 9. (Optional) Glue the crystal to the base with the E6000 glue
 10. Change the code to have your SSID and password
-11. Follow [these instructions](https://learn.adafruit.com/adafruit-feather-huzzah-esp8266/using-arduino-ide) to prepare your computer to update the code
-11. Upload the code 
+11. Follow [these instructions](https://learn.adafruit.com/adafruit-feather-huzzah-esp8266/using-arduino-ide) to prepare your computer to upload the code
+11. Upload the code using Arduino IDE
 12. :tada: Plug in the USB cable with the adapter and plug into the wall
