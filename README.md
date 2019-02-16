@@ -22,8 +22,6 @@ A simple magic crystal to alert the on-the-go witch to events to be mindful of. 
 * Velcro (optional)
 * E6000 (optional)
 
-![wiring diagram for this project](wiring.png)
-
 ## Process: 
 
 1. Solder 3 wires to the pins of the Neopixel Jewel (power, ground, in) - either use separate colors for these or be mindful of which goes to which and mark with tape. Either way you will need some way to tell them apart. 
@@ -39,3 +37,5 @@ A simple magic crystal to alert the on-the-go witch to events to be mindful of. 
 11. Follow [these instructions](https://learn.adafruit.com/adafruit-feather-huzzah-esp8266/using-arduino-ide) to prepare your computer to upload the code
 11. Upload the code using Arduino IDE
 12. :tada: Plug in the USB cable with the adapter and plug into the wall
+
+![wiring diagram for this project](wiring.png)
