@@ -22,6 +22,8 @@ A simple magic crystal to alert the on-the-go witch to events to be mindful of. 
 * Velcro (optional)
 * E6000 (optional)
 
+![wiring diagram for this project](wiring.png)
+
 ## Process: 
 
 1. Solder 3 wires to the pins of the Neopixel Jewel (power, ground, in) - either use separate colors for these or be mindful of which goes to which and mark with tape. Either way you will need some way to tell them apart. 
