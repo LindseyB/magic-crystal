@@ -8,7 +8,7 @@
 
 #define PIN 14
 #define NUM_LEDS 7
-#define BRIGHTNESS 255
+#define BRIGHTNESS 128
 #define RED 0
 #define ORANGE 1
 #define YELLOW 2
@@ -22,8 +22,8 @@
 
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUM_LEDS, PIN, NEO_GRB + NEO_KHZ800);
 
-const char* ssid     = "SSID_HERE";
-const char* password = "PASSWORD_HERE";
+const char* ssid     = "SSID";
+const char* password = "PASSWORD";
 
 const char* mercuryHost = "mercuryretrogradeapi.com";
 const char* moonHost    = "isitfullmoon.com";
@@ -31,11 +31,16 @@ const char* moonHost    = "isitfullmoon.com";
 const int httpPort  = 80;
 const int httpsPort = 443;
 
-const unsigned long SECOND = 1000;
-const unsigned long HOUR   = 3600*SECOND;
+const unsigned long HOUR   = 3600000;
+
+// ternary represenation for error handling
+const int TRUE = 1;
+const int FALSE = 0;
+const int UNKNOWN = -1;
+
 
 // specific to the mecuryretrogradeapi.com cert 
-const char fingerprint[] PROGMEM = "4a 36 25 b9 1f 4c 6d 61 c4 6f d3 8d 65 70 21 96 b0 05 13 0f";
+const char fingerprint[] PROGMEM = "f5 e1 3c 63 cc b1 eb c7 5f e9 5c d0 4a 7f 7f 2c 96 4b 7f c8";
 
 const float MAX_BRIGHTNESS = 64;
 const float SPEED          = 0.008; 
@@ -55,8 +60,6 @@ uint32_t COLORS[] = {
 };
 
 void setup() {
-  Serial.begin(115200);
-  delay(100);
   strip.setBrightness(BRIGHTNESS);
   strip.begin();
   strip.show(); // Initialize all pixels to 'off'
@@ -70,15 +73,23 @@ void setup() {
 }
 
 void loop() {
-  if (isMercuryRetrograde()) {
+  int retrograde;
+  retrograde = isMercuryRetrograde();
+  
+  if (retrograde == TRUE) {
+    strip.setBrightness(32);
     set_color_to(RED);
-    delay(HOUR*12); 
+    delay(HOUR*3); 
+  } else if (retrograde == UNKNOWN) {
+    // fingerprint probably needs to be updated
+    strip.setBrightness(BRIGHTNESS);
+    set_error_colors();
   } else if (isMoonFull()) {
     set_color_to(WHITE);
-    delay(HOUR*12); 
+    delay(HOUR*3); 
   } else {
     // breathe slowly 
-    for (unsigned long i = 0; i < (HOUR*12)/FADE_DELAY; i++) {
+    for (unsigned long i = 0; i < (HOUR*3)/FADE_DELAY; i++) {
       float intensity = MAX_BRIGHTNESS /2.0 * (1.0 + sin(SPEED * i));
       strip.setBrightness(intensity);
       set_color_to(INDIGO);
@@ -95,7 +106,8 @@ bool isMoonFull() {
     // connection failed
     return false;
   }
-
+  
+  // artisanially hand written HTTP requests *chef's kiss*
   client.print(String("GET ") + url + " HTTP/1.1\r\n" +
                "Host: " + moonHost + "\r\n" + 
                "Connection: close\r\n\r\n");
@@ -107,8 +119,6 @@ bool isMoonFull() {
     String line = client.readStringUntil('\r');
     response += line;
   }
-
-  Serial.println(response);
  
   if(response.indexOf("\"status\":\"No\"") >= 0){
     return false;
@@ -117,14 +127,14 @@ bool isMoonFull() {
   }
 }
 
-bool isMercuryRetrograde() {
+int isMercuryRetrograde() {
   WiFiClientSecure client;
   String url = "/";
 
   client.setFingerprint(fingerprint);
     if (!client.connect(mercuryHost, httpsPort)) {
     // connection failed
-    return false;
+    return UNKNOWN;
   }
 
   client.print(String("GET ") + url + " HTTP/1.1\r\n" +
@@ -139,12 +149,10 @@ bool isMercuryRetrograde() {
     response += line;
   }
 
-  Serial.println(response);
-
   if(response.indexOf("{\"is_retrograde\":false}") >= 0){
-    return false;
+    return FALSE;
   } else {
-    return true;
+    return TRUE;
   }
 }
 
@@ -152,4 +160,16 @@ bool isMercuryRetrograde() {
 void set_color_to(int color_idx) {
   strip.fill(COLORS[color_idx]);
   strip.show();
+}
+
+void set_error_colors() {
+  int error_delay = 50; 
+  
+  for(int j = 0; j < HOUR/error_delay; j++) {
+    for(int i = 0; i < 7; i++) {
+      strip.fill(COLORS[i]);
+      strip.show();
+      delay(error_delay);
+    }
+  }
 }
